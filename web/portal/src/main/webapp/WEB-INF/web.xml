@@ -256,8 +256,18 @@
     <servlet-class>org.gatein.wci.api.GateInServlet</servlet-class>
     <load-on-startup>0</load-on-startup>
   </servlet>
+  
+  <servlet>
+    <servlet-name>X509Login</servlet-name>
+    <servlet-class>org.exoplatform.authentication.cert.x509.X509CredentialExtractorServlet</servlet-class>
+  </servlet>
 
   <!--  =================================================================  -->
+  
+  <servlet-mapping>
+    <servlet-name>X509Login</servlet-name>
+    <url-pattern>/x509login</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
@@ -291,7 +301,7 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>user authentication</web-resource-name>
-      <url-pattern>/dologin</url-pattern>
+      <url-pattern>/*</url-pattern>
       <http-method>POST</http-method>
       <http-method>GET</http-method>
     </web-resource-collection>
@@ -303,15 +313,12 @@
     </user-data-constraint>
   </security-constraint>
   <login-config>
-    <auth-method>FORM</auth-method>
+    <auth-method>CLIENT-CERT</auth-method>
     <realm-name>gatein-domain</realm-name>
-    <form-login-config>
-      <form-login-page>/login</form-login-page>
-      <form-error-page>/login</form-error-page>
-    </form-login-config>
   </login-config>
   <security-role>
     <description>a simple user role</description>
     <role-name>users</role-name>
   </security-role>
+
 </web-app>
