@@ -121,7 +121,7 @@
 									print """
 										<a class="TabIcon ${iconType}" href="$nodeURL">$label</a>
 					 				""";
-								} else {%>
+								} else if (node.getChildrenCount() > 0) {%>
 									    <a class="TabIcon ${iconType}" href="#$label">$label</a>
 							<%}%>								
 							</span>
