@@ -23,13 +23,15 @@ import java.io.IOException;
  *
  * @author <a href="mailto:mtrabelsi@exoplatform.com">Marwen Trabelsi</a>
  */
-public class CustomSessionFilter extends AbstractFilter {
+public class AjaxSessionTimeoutFilter extends AbstractFilter {
 
-  private final Log LOG = ExoLogger.getLogger("org.exoplatform.security.session.CustomSessionFilter");
+  private final Log LOG = ExoLogger.getLogger("org.exoplatform.security.session.AjaxSessionTimeoutFilter");
 
   private static final int TIMEOUT_STATUS_CODE = 440;
 
-  public static final String PORTAL_SESSION_TIMEOUT = "portal.session.timeout";
+//  public static final String PORTAL_SESSION_TIMEOUT = "portal.session.timeout";
+
+  private static final String AJAX_TIMEOUT_FLAG = "ajax-timeout-flag";
 
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
@@ -37,16 +39,15 @@ public class CustomSessionFilter extends AbstractFilter {
     HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
     HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-    if (isAJAXRequest(httpRequest) && !httpRequest.isRequestedSessionIdValid()) {
+    if (!isValidAJAXRequest(httpRequest)) {
       if (LOG.isDebugEnabled())
         LOG.info(">> The session is no more valid, we will return an error since this is an AJAX request.");
       httpResponse.sendError(TIMEOUT_STATUS_CODE);
-      return;
     } else {
       filterChain.doFilter(httpRequest, servletResponse);
     }
 
-    HttpSession session = httpRequest.getSession();
+    /*HttpSession session = httpRequest.getSession();
     String sessionTimeout = System.getProperty(PORTAL_SESSION_TIMEOUT);
     if (sessionTimeout != null) {
       int sessionTimeoutValue = Integer.parseInt(sessionTimeout);
@@ -54,11 +55,23 @@ public class CustomSessionFilter extends AbstractFilter {
         LOG.info(String.format("Session timeout will be changed from : '%d' to '%d' (seconds)", session.getMaxInactiveInterval(), sessionTimeoutValue));
         session.setMaxInactiveInterval(Integer.parseInt(sessionTimeout));
       }
-    }
+    }*/
   }
 
-  private boolean isAJAXRequest(HttpServletRequest request) {
-    return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+  private boolean isValidAJAXRequest(HttpServletRequest request) {
+    if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+      if (request.isRequestedSessionIdValid()) {
+        // Even though session ID is valid, we check a custom attribute
+        HttpSession session = request.getSession(false);
+        if (session.getAttribute(AJAX_TIMEOUT_FLAG) != null) {
+          return true;
+        }
+      }
+      // No more flow is needed when the session ID is not valid
+      return false;
+    }
+    //Return true whether it is not an XHR request
+    return true;
   }
 
   @Override
