@@ -742,12 +742,18 @@
 		  headers : {"Cache-Control" : "max-age=86400"},
 		  complete : function(jqXHR) {
 			  resp = jqXHR.responseText;
-		  }
+		  },
+      error: function(jqXHR) {
+        if(jqXHR.status == 440) {
+          window.location.reload();
+        }
+      }
 	  });
 	  eXo.session.startItv();
 	  if(!async) return resp ;
 	}
 	
+
 	/**
 	 * Redirect browser to url
 	 * @param url

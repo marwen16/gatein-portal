@@ -596,7 +596,20 @@
 	    var menuItemContainer = tab.find("." + portalNav.containerStyleClass).first();
 	    if (getNodeURL && !menuItemContainer.length)
 	    {
-	      var jsChilds = ajaxAsyncGetRequest(getNodeURL, false)
+        var jsChilds;
+        $.ajax(getNodeURL, {
+          type: "GET",
+          async : false,
+          headers : {"Cache-Control" : "max-age=86400"},
+          complete : function(jqXHR) {
+            jsChilds = jqXHR.responseText;
+          },
+          error: function(jqXHR) {
+            if(jqXHR.status == 440) {
+              window.location.reload();
+            }
+          }
+        });
 	      try
 	      {
 	        var data = $.parseJSON(jsChilds);
@@ -713,7 +726,20 @@
 	    var getNodeURL = menuItem.attr("exo:getNodeURL");
 	    var subContainer = menuItem.find("." + portalNav.containerStyleClass).first();
 		    if (getNodeURL && !subContainer.length) {
-			    var jsChilds = ajaxAsyncGetRequest(getNodeURL, false);
+          var jsChilds;
+          $.ajax(getNodeURL, {
+            type: "GET",
+            async : false,
+            headers : {"Cache-Control" : "max-age=86400"},
+            complete : function(jqXHR) {
+              jsChilds = jqXHR.responseText;
+            },
+            error: function(jqXHR) {
+              if(jqXHR.status == 440) {
+                window.location.reload();
+              }
+            }
+          });
 			  	try {
 			  		var data = $.parseJSON(jsChilds);
 			  	} catch (e) {
