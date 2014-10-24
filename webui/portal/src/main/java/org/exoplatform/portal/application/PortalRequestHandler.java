@@ -19,15 +19,6 @@
 
 package org.exoplatform.portal.application;
 
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Locale;
-import java.util.ServiceLoader;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.exoplatform.commons.utils.I18N;
 import org.exoplatform.commons.utils.Safe;
 import org.exoplatform.container.PortalContainer;
@@ -47,7 +38,14 @@ import org.exoplatform.web.application.RequestFailure;
 import org.exoplatform.web.controller.QualifiedName;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.core.UIApplication;
-import org.gatein.common.text.EntityEncoder;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Locale;
+import java.util.ServiceLoader;
 
 /**
  * Created by The eXo Platform SAS Dec 9, 2006
@@ -165,7 +163,11 @@ public class PortalRequestHandler extends WebRequestHandler {
             if (persistentPortalConfig == null) {
                 return false;
             } else if (req.getRemoteUser() == null) {
-                context.requestAuthenticationLogin();
+                if (context.isXMLHttpRequest()) {
+                    context.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    context.requestAuthenticationLogin();
+                }
             } else {
                 context.sendError(HttpServletResponse.SC_FORBIDDEN);
             }

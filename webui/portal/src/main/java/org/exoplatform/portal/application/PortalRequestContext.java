@@ -19,24 +19,6 @@
 
 package org.exoplatform.portal.application;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 import org.exoplatform.Constants;
 import org.exoplatform.commons.utils.ExpressionUtil;
 import org.exoplatform.commons.utils.PortalPrinter;
@@ -79,6 +61,23 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.url.ComponentURL;
 import org.gatein.common.http.QueryStringParser;
 import org.w3c.dom.Element;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * This class extends the abstract WebuiRequestContext which itself extends the RequestContext one
@@ -344,6 +343,10 @@ public class PortalRequestContext extends WebuiRequestContext {
         }
 
         sendRedirect(loginPath.toString());
+    }
+
+    public boolean isXMLHttpRequest() {
+        return "XMLHttpRequest".equals(request_.getHeader("X-Requested-With"));
     }
 
     public String getTitle() throws Exception {

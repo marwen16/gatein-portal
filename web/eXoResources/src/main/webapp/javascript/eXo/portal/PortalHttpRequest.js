@@ -696,13 +696,13 @@
 		return instance ;
 	}
 
-	/*
+	/**
 	* The doRequest() method takes incoming request from GET and POST calls
 	* The second argument is the URL to target on the server
 	* The third argument is the query string object which is created out of
 	* a form element, this value is not null only when there is a POST request.
 	*
-	* 1) An AjaxRequest object is instanciated, it holds the reference to the
+	* 1) An AjaxRequest object is instantiated, it holds the reference to the
 	*    XHR method
 	* 2) An HttpResponseHandler object is instantiated and its methods like
 	*    ajaxResponse, ajaxLoading, ajaxTimeout are associated with the one from
@@ -762,7 +762,17 @@
 		  headers : {"Cache-Control" : "max-age=86400"},
 		  complete : function(jqXHR) {
 			  resp = jqXHR.responseText;
-		  }
+		  },
+      error : function(jqXHR) {
+        if (jqXHR.status == 401) {
+          /*
+          If the user is unauthorised, reload the page which internally
+          will redirect to login page. (This prevents loosing the current
+          page URL and keeping it in chained request initialURI parameter)
+          */
+          window.location.reload() ;
+        }
+      }
 	  });
 	  eXo.session.startItv();
 	  if(!async) return resp ;
